@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MXF Web Player</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <aside id="sidebar">
+    <div class="side-head">
+      <span class="logo">MXF</span><span class="logo-sub">Web Player</span>
+    </div>
+    <input id="filter" type="search" placeholder="파일 검색…">
+    <ul id="files"></ul>
+    <div id="root" class="muted"></div>
+  </aside>
+
+  <main id="main">
+    <div id="stage">
+      <canvas id="video"></canvas>
+      <div id="safe" hidden><div class="action"></div><div class="title"></div></div>
+      <div id="overlay">
+        <div id="msg">왼쪽 목록에서 MXF 파일을 선택하세요</div>
+        <div id="badge"></div>
+      </div>
+      <div id="meters-wrap"><canvas id="meters" width="160" height="240"></canvas></div>
+    </div>
+
+    <div id="timeline-wrap">
+      <canvas id="timeline" height="44"></canvas>
+    </div>
+
+    <div id="transport">
+      <div class="group">
+        <button id="b-start" title="처음 (Home)" data-icon="start"></button>
+        <button id="b-prevgop" title="이전 GOP (Shift+←)" data-icon="rew"></button>
+        <button id="b-prev" title="이전 프레임 (←)" data-icon="prev"></button>
+        <button id="b-play" class="primary" title="재생/정지 (Space)" data-icon="play"></button>
+        <button id="b-next" title="다음 프레임 (→)" data-icon="next"></button>
+        <button id="b-nextgop" title="다음 GOP (Shift+→)" data-icon="ff"></button>
+        <button id="b-end" title="끝 (End)" data-icon="end"></button>
+      </div>
+      <div class="group tc">
+        <input id="tc" class="tc-input" value="--:--:--:--" title="타임코드 입력 후 Enter로 이동" spellcheck="false">
+        <span class="muted">/</span>
+        <span id="tc-dur" class="tc-dur">--:--:--:--</span>
+        <span id="frameno" class="muted"></span>
+      </div>
+      <div class="group">
+        <label>속도
+          <select id="rate">
+            <option value="-4">-4×</option><option value="-2">-2×</option><option value="-1">-1×</option>
+            <option value="0.25">¼×</option><option value="0.5">½×</option>
+            <option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option>
+          </select>
+        </label>
+        <label class="chk"><input id="loop" type="checkbox"> 반복</label>
+      </div>
+      <div class="group">
+        <button id="b-mute" title="음소거 (M)" data-icon="vol"></button>
+        <input id="vol" type="range" min="0" max="1" step="0.01" value="0.8">
+      </div>
+    </div>
+
+    <div id="panels">
+      <section class="panel">
+        <h3>디코딩</h3>
+        <label>해상도
+          <select id="quality">
+            <option value="0">Full (원본)</option>
+            <option value="1" selected>Half (1/2)</option>
+            <option value="2">Quarter (1/4)</option>
+          </select>
+        </label>
+        <label>워커 수 <select id="workers"></select></label>
+        <label>선읽기 GOP <select id="ahead"><option>3</option><option>4</option><option selected>6</option><option>10</option><option>16</option></select></label>
+        <label>캐시 한도 <select id="cachelimit"><option value="256">256 MB</option><option value="768" selected>768 MB</option><option value="1536">1.5 GB</option><option value="3072">3 GB</option></select></label>
+      </section>
+      <section class="panel">
+        <h3>표시</h3>
+        <label>필드
+          <select id="field">
+            <option value="-1">Weave (프레임)</option>
+            <option value="0">Bob – Top field</option>
+            <option value="1">Bob – Bottom field</option>
+          </select>
+        </label>
+        <label>색 행렬 <select id="matrix"><option value="auto">Auto</option><option value="709">BT.709</option><option value="601">BT.601</option></select></label>
+        <label class="chk"><input id="luma" type="checkbox"> Luma only</label>
+        <label class="chk"><input id="safearea" type="checkbox"> Safe area</label>
+        <button id="b-snap" title="현재 프레임 PNG 저장">PNG 저장</button>
+        <button id="b-full" title="전체화면 (F)">전체화면</button>
+      </section>
+      <section class="panel">
+        <h3>오디오 라우팅 <span class="muted small">(클릭: L → R → C → off)</span></h3>
+        <div id="tracks"></div>
+      </section>
+      <section class="panel">
+        <h3>정보</h3>
+        <dl id="info"></dl>
+      </section>
+      <section class="panel">
+        <h3>상태</h3>
+        <dl id="stats"></dl>
+      </section>
+    </div>
+    <div id="help" class="muted small">
+      Space 재생/정지 · J/K/L 셔틀 · ←/→ 프레임 · Shift+←/→ GOP · Home/End · M 음소거 · F 전체화면 · 타임라인 드래그 = I-frame 스크럽
+    </div>
+  </main>
+</div>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
